@@ -1,1 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Smart Exam Eye Tracking</title>
 
+  <!-- Tailwind (optional, used for quick classes) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+<!-- CSS -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+<!-- JS -->
+<script defer src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+
+  <!-- Libraries -->
+  <script src="https://webgazer.cs.brown.edu/webgazer.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.21.0/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/posenet"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+
+</head>
+<body>
+  <div id="sound-controls">
+    <button id="mute-btn" class="sound-btn">🔈 Mute Alerts</button>
+  </div>
+
+  <header id="header">
+    <h1>👁️ Smart Exam Proctoring</h1>
+  </header>
+
+  <main class="center">
+    <section id="question-area" class="card">
+      <h2 class="text-xl font-semibold text-sky-400 mb-4">Question 1 of 10</h2>
+      <p class="text-lg mb-4">What is the capital of France?</p>
+      <div class="space-y-3 answers">
+        <div class="answer">A) London</div>
+        <div class="answer">B) Berlin</div>
+        <div class="answer">C) Paris</div>
+        <div class="answer">D) Madrid</div>
+      </div>
+    </section>
+
+    <div id="progress-container" class="progress-wrap">
+      <div id="progress-bar" class="progress-bar"></div>
+    </div>
+
+    <div id="status-bar" class="status">Calibration required. Click "Calibrate" to begin!</div>
+
+    <button id="calib-btn" class="calib-btn">Calibrate Eye Tracker</button>
+
+    <div id="alert-msg" class="alert hidden"></div>
+
+    <!-- audio -->
+    <audio id="warning-sound" preload="auto">
+      <source src="https://assets.mixkit.co/active_storage/sfx/250/250-preview.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="violation-sound" preload="auto">
+      <source src="https://assets.mixkit.co/active_storage/sfx/247/247-preview.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="critical-sound" preload="auto">
+      <source src="https://assets.mixkit.co/active_storage/sfx/249/249-preview.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- system status -->
+    <div id="system-status" class="system hidden">
+      <h3 class="text-lg font-semibold text-green-400 mb-3">System Status</h3>
+      <div class="status-grid">
+        <div class="status-item"><span class="status-label">Face Detection:</span><span id="face-status" class="status-value">❌</span></div>
+        <div class="status-item"><span class="status-label">Body Tracking:</span><span id="body-status" class="status-value">❌</span></div>
+        <div class="status-item"><span class="status-label">Multiple Person:</span><span id="multi-person-status" class="status-value">❌</span></div>
+        <div class="status-item"><span class="status-label">Sound Alerts:</span><span id="sound-status" class="status-value">🔊</span></div>
+        <div class="status-item"><span class="status-label">Eye Tracking:</span><span id="eye-status" class="status-value">❌</span></div>
+        <div class="status-item"><span class="status-label">Calibration:</span><span id="calib-status" class="status-value">❌</span></div>
+      </div>
+    </div>
+
+    <!-- Provide a video element that libraries can bind to (webgazer will create one automatically,
+         but having an id helps face-api and debugging) -->
+    <video id="webgazerVideoFeed" class="hidden" autoplay muted playsinline></video>
+  </main>
+</body>
+</html>
